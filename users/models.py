@@ -14,9 +14,16 @@ class CustomUser(AbstractUser):
         max_length=20,
         verbose_name="Роль",
     )
-    bio = models.TextField(max_length=1000, blank=True,
-                           verbose_name="О себе", )
+    bio = models.TextField(
+        max_length=1000,
+        blank=True,
+        verbose_name="О себе",
+    )
+    confirmation_code = models.CharField(
+        max_length=254,
+        blank=True,
+        verbose_name="Код подтверждения"
+    )
 
     def __str__(self):
-        full_name = self.get_full_name()
-        return f"{self.role}: {full_name}"
+        return f"{self.role}: {self.email}"
