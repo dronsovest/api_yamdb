@@ -11,10 +11,18 @@ class UserSerializer(serializers.ModelSerializer):
         model = CustomUser
 
 
-class EmailSerializer(serializers.Serializer):
-    email = serializers.EmailField(required=True)
+class EmailSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField()
+
+    class Meta:
+        model = CustomUser
+        fields = ('email',)
 
 
 class GetTokenSerializer(serializers.Serializer):
-    confirmation_code = serializers.CharField(required=True)
-    email = serializers.EmailField(required=True)
+    email = serializers.EmailField()
+    confirmation_code = serializers.CharField()
+
+    class Meta:
+        model = CustomUser
+        fields = ('email', 'confirmation_code',)
