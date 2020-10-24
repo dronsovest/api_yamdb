@@ -1,12 +1,22 @@
 from rest_framework import serializers
+from rest_framework.validators import UniqueValidator
 
 from .models import CustomUser
 
 
 class UserSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(
+        validators=(UniqueValidator(queryset=CustomUser.objects.all()),)
+    )
+
     class Meta:
         fields = (
-            'username', 'first_name', 'last_name', 'email', 'role', 'bio',
+            "username",
+            "first_name",
+            "last_name",
+            "email",
+            "role",
+            "bio",
         )
         model = CustomUser
 
@@ -16,7 +26,7 @@ class EmailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ('email',)
+        fields = ("email",)
 
 
 class GetTokenSerializer(serializers.Serializer):
@@ -25,4 +35,7 @@ class GetTokenSerializer(serializers.Serializer):
 
     class Meta:
         model = CustomUser
-        fields = ('email', 'confirmation_code',)
+        fields = (
+            "email",
+            "confirmation_code",
+        )
