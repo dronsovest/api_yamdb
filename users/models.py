@@ -15,15 +15,11 @@ class CustomUser(AbstractUser):
         verbose_name="Роль",
     )
     bio = models.TextField(
-        max_length=1000,
-        blank=True,
-        verbose_name="О себе",
+        max_length=1000, blank=True, null=True, verbose_name="О себе",
     )
-    confirmation_code = models.CharField(
-        max_length=254,
-        blank=True,
-        verbose_name="Код подтверждения"
-    )
+
+    class Meta:
+        ordering = ["id"]
 
     def __str__(self):
         return f"{self.role}: {self.email}"
