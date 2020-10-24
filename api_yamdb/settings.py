@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'users.apps.UsersConfig',
+    'api',
 ]
 
 AUTH_USER_MODEL = 'users.CustomUser'
@@ -61,7 +62,7 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': [
         'django_filters.rest_framework.DjangoFilterBackend', ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10,
+    'PAGE_SIZE': 5,
 }
 
 SIMPLE_JWT = {
