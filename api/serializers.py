@@ -6,14 +6,14 @@ from .models import Genre, Catigories, Title
 class GenreSerializer(serializers.ModelSerializer):
     
     class Meta:
-        fields = "__all__"
+        fields = ("name", "slug")
         model = Genre
 
 
 class CatigoriesSerializer(serializers.ModelSerializer):
     
     class Meta:
-        fields = "__all__"
+        fields = ("name", "slug")
         model = Catigories
 
 
