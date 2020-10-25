@@ -8,7 +8,7 @@ from .serializers import (
     CatigoriesSerializer,
     TitleSerializer,
 )
-#from rest_framework import permissions
+
 
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 5
