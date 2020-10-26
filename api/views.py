@@ -2,6 +2,7 @@ from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework.pagination import PageNumberPagination
 from rest_framework import filters
+from rest_framework import mixins
 from django_filters.rest_framework import DjangoFilterBackend
 from .permissions import IsSuperuserPermission
 from .models import Genre, Catigories, Title
@@ -12,7 +13,13 @@ from .serializers import (
 )
 
 
-class GenreViewSet(viewsets.ModelViewSet):
+class ListCreateApiViewSet(mixins.CreateModelMixin, 
+                           mixins.ListModelMixin, 
+                           viewsets.GenericViewSet): 
+    pass 
+
+
+class GenreViewSet(ListCreateApiViewSet):
     serializer_class = GenreSerializer
     queryset = Genre.objects.all()
     pagination_class = PageNumberPagination
@@ -22,7 +29,7 @@ class GenreViewSet(viewsets.ModelViewSet):
     lookup_field = 'slug'
 
 
-class CategoriesViewSet(viewsets.ModelViewSet):
+class CategoriesViewSet(ListCreateApiViewSet):
     serializer_class = CatigoriesSerializer
     queryset = Catigories.objects.all()
     pagination_class = PageNumberPagination
