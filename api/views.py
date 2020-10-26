@@ -38,6 +38,9 @@ class CategoriesViewSet(ListCreateApiViewSet):
     search_fields = ('name',)
     lookup_field = 'slug'
 
+    def perform_destroy(self, serializer):
+        serializer.delete()
+
 
 class TitleViewSet(viewsets.ModelViewSet):
     serializer_class = TitleSerializer
