@@ -4,6 +4,7 @@ from rest_framework import filters
 from rest_framework import mixins
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
+from rest_framework.permissions import IsAuthenticated
 
 from users.permissions import IsAdmin
 from .filter import TitleFilter
@@ -60,13 +61,12 @@ class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
     queryset = Review.objects.all()
     permission_classes = (
-        # IsAuthenticated,
+        IsAuthenticated,
         # IsOwnerOrReadOnly,
     )
 
     def get_queryset(self):
         review = get_object_or_404(Title, id=self.kwargs.get('title_id'))
-        # if post is not None: - а что если добавить такое? необязательно?
         queryset = Review.objects.filter(title__id=self.kwargs.get('title_id'))
 
 

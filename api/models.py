@@ -34,7 +34,7 @@ class Title(models.Model):
 class Review(models.Model):
     author = models.ForeignKey(
         User,
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
         null=True,
         related_name="reviewer"
     )
@@ -55,7 +55,7 @@ class Review(models.Model):
 class Comments(models.Model):
     author = models.ForeignKey(
         User,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name="commenter"
     )
     # title = models.ForeignKey(
