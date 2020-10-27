@@ -1,6 +1,7 @@
+import datetime
+
 from django.db import models
 from django.contrib.auth import get_user_model
-
 
 User = get_user_model()
 
@@ -16,16 +17,12 @@ class Catigories(models.Model):
 
 
 class Title(models.Model):
-    name = models.CharField(max_length=60)
-    year = models.IntegerField()
-    description = models.TextField()
-    genre = models.ForeignKey(
-        Genre,
-        on_delete=models.PROTECT,
-        related_name="title"
-    )
-    category = models.ForeignKey(
-        Catigories,
-        on_delete=models.PROTECT,
-        related_name="catigory"
-    )
+    name = models.CharField(max_length=60,
+                            verbose_name='название произведения')
+    year = models.IntegerField(verbose_name='год опубликования', null=True,
+                               blank=True, )
+    description = models.TextField(verbose_name='описание')
+    genre = models.ManyToManyField(Genre, related_name="title",
+                                   verbose_name='жанр')
+    category = models.ForeignKey(Catigories, on_delete=models.SET_NULL,
+                                 null=True, related_name="category")
