@@ -1,53 +1,54 @@
-from django.shortcuts import render
+from django.db.models import Avg
 from rest_framework import viewsets
-from rest_framework.pagination import PageNumberPagination
 from rest_framework import filters
 from rest_framework import mixins
 from django_filters.rest_framework import DjangoFilterBackend
-from .permissions import IsSuperuserPermission
+
+from users.permissions import IsAdmin
+from .permissions import ReadOnly
 from .models import Genre, Catigories, Title
 from .serializers import (
     GenreSerializer,
     CatigoriesSerializer,
-    TitleSerializer,
+    TitleCreateSerializer,
+    TitleListSerializer,
 )
 
 
-class ListCreateApiViewSet(mixins.CreateModelMixin, 
-                           mixins.ListModelMixin, 
-                           viewsets.GenericViewSet): 
-    pass 
+class ListCreateDeleteApiViewSet(mixins.CreateModelMixin,
+                                 mixins.ListModelMixin,
+                                 mixins.DestroyModelMixin,
+                                 viewsets.GenericViewSet):
+    pass
 
 
-class GenreViewSet(ListCreateApiViewSet):
+class GenreViewSet(ListCreateDeleteApiViewSet):
     serializer_class = GenreSerializer
     queryset = Genre.objects.all()
-    pagination_class = PageNumberPagination
-    permission_classes = (IsSuperuserPermission, )
-    filter_backends = [filters.SearchFilter]
-    search_fields = ('name', )
-    lookup_field = 'slug'
-
-
-class CategoriesViewSet(ListCreateApiViewSet):
-    serializer_class = CatigoriesSerializer
-    queryset = Catigories.objects.all()
-    pagination_class = PageNumberPagination
-    permission_classes = (IsSuperuserPermission,)
+    permission_classes = (IsAdmin | ReadOnly,)
     filter_backends = [filters.SearchFilter]
     search_fields = ('name',)
     lookup_field = 'slug'
 
-    def perform_destroy(self, serializer):
-        serializer.delete()
+
+class CategoriesViewSet(ListCreateDeleteApiViewSet):
+    serializer_class = CatigoriesSerializer
+    queryset = Catigories.objects.all()
+    permission_classes = (IsAdmin | ReadOnly,)
+    filter_backends = [filters.SearchFilter]
+    search_fields = ('name',)
+    lookup_field = 'slug'
 
 
 class TitleViewSet(viewsets.ModelViewSet):
-    serializer_class = TitleSerializer
-    queryset = Title.objects.all()
-    pagination_class = PageNumberPagination
-    permission_classes = (IsSuperuserPermission,)
+    queryset = Title.objects.annotate(rating=Avg('title__score'))
+    permission_classes = (IsAdmin | ReadOnly,)
     filter_backends = (DjangoFilterBackend, filters.SearchFilter)
     filter_fields = ('category', 'genre')
     search_fields = ('name', 'year')
-    lookup_field = 'slug'
+    lookup_field = 'genre__slug'
+
+    def get_serializer_class(self):
+        if self.action in ('create', 'update', 'partial_update'):
+            return TitleCreateSerializer
+        return TitleListSerializer
