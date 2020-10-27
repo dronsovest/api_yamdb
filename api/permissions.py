@@ -1,8 +1,6 @@
 from rest_framework import permissions
 
 
-class IsSuperuserPermission(permissions.BasePermission):
+class ReadOnly(permissions.BasePermission):
     def has_permission(self, request, view):
-        return (request.user.is_superuser or
-                request.method in permissions.SAFE_METHODS
-                )
+        return request.method in permissions.SAFE_METHODS
