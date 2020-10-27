@@ -5,6 +5,7 @@ from rest_framework import mixins
 from django_filters.rest_framework import DjangoFilterBackend
 
 from users.permissions import IsAdmin
+from .filter import TitleFilter
 from .permissions import ReadOnly
 from .models import Genre, Catigories, Title
 from .serializers import (
@@ -43,10 +44,8 @@ class CategoriesViewSet(ListCreateDeleteApiViewSet):
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.annotate(rating=Avg('title__score'))
     permission_classes = (IsAdmin | ReadOnly,)
-    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
-    filter_fields = ('category', 'genre')
-    search_fields = ('name', 'year')
-    lookup_field = 'genre__slug'
+    filter_backends = (DjangoFilterBackend,)
+    filter_class = TitleFilter
 
     def get_serializer_class(self):
         if self.action in ('create', 'update', 'partial_update'):
