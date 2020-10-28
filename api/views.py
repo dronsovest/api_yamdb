@@ -32,7 +32,6 @@ class TitleViewSet(viewsets.ModelViewSet):
     serializer_class = TitleSerializer
     queryset = Title.objects.all()
     permission_classes = (IsAdmin | ReadOnly,)
-    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
     filter_fields = ('category', 'genre',)
     search_fields = ('name', 'year',)
     lookup_field = 'slug'
