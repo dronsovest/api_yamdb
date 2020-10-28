@@ -9,33 +9,58 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('api', '0001_initial'),
+        ("api", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='title',
-            name='category',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='catigory', to='api.Catigories'),
+            model_name="title",
+            name="category",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="catigory",
+                to="api.Catigories",
+            ),
         ),
-        migrations.RemoveField(
-            model_name='title',
-            name='genre',
-        ),
+        migrations.RemoveField(model_name="title", name="genre",),
         migrations.AddField(
-            model_name='title',
-            name='genre',
-            field=models.ManyToManyField(related_name='title', to='api.Genre'),
+            model_name="title",
+            name="genre",
+            field=models.ManyToManyField(related_name="title", to="api.Genre"),
         ),
         migrations.CreateModel(
-            name='Review',
+            name="Review",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('text', models.TextField(max_length=1000)),
-                ('score', models.IntegerField()),
-                ('pub_date', models.DateTimeField(auto_now_add=True)),
-                ('author', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='reviewer', to=settings.AUTH_USER_MODEL)),
-                ('title', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='title', to='api.Title')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("text", models.TextField(max_length=1000)),
+                ("score", models.IntegerField()),
+                ("pub_date", models.DateTimeField(auto_now_add=True)),
+                (
+                    "author",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="reviewer",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "title",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="title",
+                        to="api.Title",
+                    ),
+                ),
             ],
         ),
     ]
