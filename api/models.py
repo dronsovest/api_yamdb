@@ -38,11 +38,10 @@ class Review(models.Model):
         null=True,
         related_name="reviewer"
     )
-    title = models.ManyToManyField(
+    title = models.ForeignKey(
         Title,
-        # on_delete=models.CASCADE,
-        related_name="title",
-        # verbose_name="title_id"
+        on_delete=models.CASCADE,
+        related_name="title"
     )
     text = models.TextField(max_length=1000)
     score = models.IntegerField(
@@ -59,11 +58,6 @@ class Comments(models.Model):
         on_delete=models.CASCADE,
         related_name="commenter"
     )
-    # title = models.ForeignKey(
-    #     Title,
-    #     on_delete=models.CASCADE,
-    #     related_name="title"
-    # )
     review = models.ForeignKey(
         Review,
         on_delete=models.CASCADE,
