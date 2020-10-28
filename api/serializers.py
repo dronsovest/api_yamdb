@@ -1,6 +1,9 @@
 from rest_framework import serializers
 
-from .models import Genre, Catigories, Title
+from rest_framework.validators import UniqueTogetherValidator
+
+
+from .models import Genre, Catigories, Title, Review, Comments
 
 
 class GenreSerializer(serializers.ModelSerializer):
@@ -15,7 +18,7 @@ class CatigoriesSerializer(serializers.ModelSerializer):
         model = Catigories
 
 
-class TitleSerializer(serializers.ModelSerializer):
+class TitleCreateSerializer(serializers.ModelSerializer):
     genre = serializers.SlugRelatedField(
         queryset=Genre.objects.all(),
         slug_field="slug",
@@ -24,7 +27,6 @@ class TitleSerializer(serializers.ModelSerializer):
     category = serializers.SlugRelatedField(
         queryset=Catigories.objects.all(),
         slug_field="slug",
-        required=False,
     )
 
     year = serializers.IntegerField(required=False)
@@ -32,4 +34,31 @@ class TitleSerializer(serializers.ModelSerializer):
     class Meta:
         fields = ('id', 'name', 'year', 'description', 'genre', 'category')
         model = Title
-        # extra_kwargs = {'year': {'required': False}}
+
+
+class TitleListSerializer(serializers.ModelSerializer):
+    genre = GenreSerializer(many=True)
+    category = CatigoriesSerializer()
+    rating = serializers.FloatField(read_only=True)
+
+    class Meta:
+        fields = "__all__"
+        model = Title
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        fields = '__all__'
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Review.objects.all(),
+                fields=('title', 'author')
+            )
+        ]
+
+
+class CommentsSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = "__all__"
+        model = Comments

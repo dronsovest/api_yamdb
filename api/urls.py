@@ -1,6 +1,6 @@
-from django.urls import path, include 
+from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import GenreViewSet, CategoriesViewSet, TitleViewSet
+from .views import GenreViewSet, CategoriesViewSet, TitleViewSet, ReviewViewSet, CommentViewSet
 
 from users.views import GetConfirmationCode, GetToken, UserViewSet
 
@@ -10,6 +10,8 @@ router.register("users", UserViewSet, basename="users")
 router.register("genres", GenreViewSet, basename="genres")
 router.register("categories", CategoriesViewSet, basename="categories")
 router.register("titles", TitleViewSet, basename="titles")
+router.register(r"titles/(?P<title_id>\d+)/reviews", ReviewViewSet, basename="reviews")
+router.register(r"titles/(?P<title_id>\d+)/reviews/(?P<review_id>\d+)/comments", CommentViewSet, basename="comments")
 
 urlpatterns = [
     path("v1/", include(router.urls)),
