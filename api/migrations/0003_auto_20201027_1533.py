@@ -9,13 +9,18 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('api', '0002_auto_20201027_1518'),
+        ("api", "0002_auto_20201027_1518"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='review',
-            name='author',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='reviewer', to=settings.AUTH_USER_MODEL),
+            model_name="review",
+            name="author",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="reviewer",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
     ]
