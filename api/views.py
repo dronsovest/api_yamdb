@@ -3,16 +3,19 @@ from rest_framework import viewsets
 from rest_framework import filters
 from rest_framework import mixins
 from django_filters.rest_framework import DjangoFilterBackend
+from django.shortcuts import get_object_or_404
 
 from users.permissions import IsAdmin
 from .filter import TitleFilter
 from .permissions import ReadOnly
-from .models import Genre, Catigories, Title
+from .models import Genre, Catigories, Title, Review, Comments
 from .serializers import (
     GenreSerializer,
     CatigoriesSerializer,
     TitleCreateSerializer,
     TitleListSerializer,
+    ReviewSerializer,
+    CommentsSerializer
 )
 
 
@@ -51,3 +54,19 @@ class TitleViewSet(viewsets.ModelViewSet):
         if self.action in ('create', 'update', 'partial_update'):
             return TitleCreateSerializer
         return TitleListSerializer
+
+
+class ReviewViewSet(viewsets.ModelViewSet):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
+
+    def get_queryset(self):
+        title = get_object_or_404(Title, pk=self.kwargs["title_id"])
+        queryset = Review.objects.filter(title__id=self.kwargs.get("title_id"))
+        return queryset
+
+
+class CommentViewSet(viewsets.ModelViewSet):
+    serializer_class = CommentsSerializer
+    queryset = Comments.objects.all()
+    pass
