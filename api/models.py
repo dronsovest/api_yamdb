@@ -44,14 +44,6 @@ class Review(models.Model):
         related_name="title"
     )
     text = models.TextField(max_length=1000)
-<<<<<<< HEAD
-    score = models.IntegerField(null=False)
-    pub_date = models.DateTimeField(
-        auto_now_add=True,
-        null=False,
-        blank=False
-    )
-=======
     score = models.IntegerField(
         validators=[
             MinValueValidator(1),
@@ -73,4 +65,4 @@ class Comments(models.Model):
     )
     text = models.TextField(max_length=1000)
     pub_date = models.DateTimeField(auto_now_add=True, null=False, blank=False)
->>>>>>> dev/delete
+

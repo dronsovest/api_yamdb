@@ -1,11 +1,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-<<<<<<< HEAD
-=======
 from .views import GenreViewSet, CategoriesViewSet, TitleViewSet, ReviewViewSet, CommentViewSet
->>>>>>> dev/delete
 
-from .views import GenreViewSet, CategoriesViewSet, TitleViewSet
 from users.views import GetConfirmationCode, GetToken, UserViewSet
 
 router = DefaultRouter()
