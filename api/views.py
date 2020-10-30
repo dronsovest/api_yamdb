@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, mixins, viewsets
 from rest_framework.exceptions import ValidationError
-from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 
 from users.permissions import IsAdmin
 
@@ -57,7 +57,12 @@ class TitleViewSet(viewsets.ModelViewSet):
 class ReviewViewSet(viewsets.ModelViewSet):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
-    permission_classes = (IsOwner | ReadOnly | IsModerator | IsAdmin,)
+    permission_classes_by_method = {
+        'GET': [ReadOnly],
+        'POST': [IsAuthenticated],
+        'DELETE': [IsModerator],
+        'PATCH': [IsOwner]
+    }
 
     def get_queryset(self):
         title = get_object_or_404(Title, pk=self.kwargs["title_id"])
@@ -74,42 +79,30 @@ class ReviewViewSet(viewsets.ModelViewSet):
             )
         serializer.save(author=self.request.user, title=title)
 
-    def partial_update(self, request, pk=None, title_id=None):
-        review = get_object_or_404(
-            Review,
-            title_id=self.kwargs["title_id"],
-            pk=self.kwargs["pk"],
-        )
-        serializer = ReviewSerializer(
-            review,
-            data=self.request.data,
-            partial=True
-        )
-        if review.author == request.user:
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=200)
-            raise ValidationError(
-                detail="Вы не можете редактировать чужой отзыв"
-            )
-        return Response(status=403)
-
-    def destroy(self, request, pk=None, title_id=None):
-        review = get_object_or_404(
-            Review,
-            title_id=self.kwargs["title_id"],
-            pk=self.kwargs["pk"],
-        )
-        if review.author == request.user:
-            review.delete()
-            return Response(status=200)
-        return Response(status=403)
+    def get_permissions(self):
+        try:
+            return [
+                permission() for permission
+                in self.permission_classes_by_method[
+                    self.request._request.method
+                ]
+            ]
+        except KeyError:
+            return [
+                permission() for permission
+                in self.permission_classes_by_method['default']
+            ]
 
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentsSerializer
     queryset = Comments.objects.all()
-    permission_classes = (IsOwner | ReadOnly | IsModerator | IsAdmin,)
+    permission_classes_by_method = {
+        'GET': [ReadOnly],
+        'POST': [IsAuthenticated],
+        'DELETE': [IsModerator],
+        'PATCH': [IsOwner]
+    }
 
     def get_queryset(self):
         review = get_object_or_404(
@@ -127,22 +120,18 @@ class CommentViewSet(viewsets.ModelViewSet):
         )
         serializer.save(author=self.request.user, review=review)
 
-    def partial_update(self, request, pk=None, title_id=None, review_id=None):
-        comment = get_object_or_404(
-            Comments,
-            pk=self.kwargs["pk"],
-            review_id=self.kwargs["review_id"],
-        )
-        serializer = CommentsSerializer(
-            comment,
-            data=self.request.data,
-            partial=True
-        )
-        if comment.author == request.user:
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=200)
-            raise ValidationError(
-                detail="Вы не можете редактировать чужой комментарий"
-            )
-        return Response(status=403)
+    def get_permissions(self):
+        try:
+            return [
+                permission() for permission
+                in self.permission_classes_by_method[
+                    self.request._request.method
+                ]
+            ]
+        except KeyError:
+            return [
+                permission() for permission
+                in self.permission_classes_by_method[
+                    'default'
+                ]
+            ]
