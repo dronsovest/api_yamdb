@@ -89,7 +89,9 @@ class ReviewViewSet(viewsets.ModelViewSet):
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=200)
-            raise ValidationError(detail="Вы не можете редактировать чужой отзыв")
+            raise ValidationError(
+                detail="Вы не можете редактировать чужой отзыв"
+            )
         return Response(status=403)
 
     def destroy(self, request, pk=None, title_id=None):
@@ -140,5 +142,7 @@ class CommentViewSet(viewsets.ModelViewSet):
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=200)
-            raise ValidationError(detail="Вы не можете редактировать чужой комментарий")
+            raise ValidationError(
+                detail="Вы не можете редактировать чужой комментарий"
+            )
         return Response(status=403)
