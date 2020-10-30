@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, mixins, viewsets
 from rest_framework.exceptions import ValidationError
-from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 from users.permissions import IsAdmin
 
@@ -57,7 +57,7 @@ class TitleViewSet(viewsets.ModelViewSet):
 class ReviewViewSet(viewsets.ModelViewSet):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
-    permission_classes = (IsOwner | ReadOnly | IsModerator | IsAdmin,)
+    permission_classes = (IsAuthenticatedOrReadOnly | IsOwner | IsModerator | IsAdmin,)
 
     def get_queryset(self):
         title = get_object_or_404(Title, pk=self.kwargs["title_id"])
@@ -74,28 +74,11 @@ class ReviewViewSet(viewsets.ModelViewSet):
             )
         serializer.save(author=self.request.user, title=title)
 
-    """метод PATCH пока не работает, отдаёт 404 почему-то"""
-    def partial_update(self, request, pk=None, title_id=None):
-        review = get_object_or_404(
-            Review,
-            title_id=self.kwargs.get("title_id"),
-            pk=self.kwargs.get("review_id"),
-        )
-        serializer = ReviewSerializer(
-            review,
-            data=self.request.data,
-            partial=True
-        )
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=200)
-        return Response(serializer.errors, status=404)
-
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentsSerializer
     queryset = Comments.objects.all()
-    permission_classes = (IsOwner | ReadOnly | IsModerator | IsAdmin,)
+    permission_classes = (IsAuthenticatedOrReadOnly | IsOwner | IsModerator | IsAdmin,)
 
     def get_queryset(self):
         review = get_object_or_404(
@@ -112,21 +95,3 @@ class CommentViewSet(viewsets.ModelViewSet):
             title_id=self.kwargs.get("title_id"),
         )
         serializer.save(author=self.request.user, review=review)
-
-    """метод PATCH пока не работает, отдаёт 404 почему-то"""
-    def partial_update(self, request, pk=None, title_id=None, review_id=None):
-        comment = get_object_or_404(
-            Comments,
-            pk=self.kwargs.get("comments_id"),
-            title_id=self.kwargs.get("title_id"),
-            review_id=self.kwargs.get("review_id"),
-        )
-        serializer = CommentsSerializer(
-            comment,
-            data=self.request.data,
-            partial=True
-        )
-        if serializer.is_valid():
-            serializer.save()
-            return Response(data=serializer.data, status=200)
-        return Response(data=serializer.errors, status=404)
