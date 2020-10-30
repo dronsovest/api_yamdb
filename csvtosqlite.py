@@ -1,4 +1,6 @@
-import csv, sqlite3
+import csv
+import sqlite3
+
 
 def _get_col_datatypes(fin):
     dr = csv.DictReader(fin) # comma is default delimiter

@@ -41,16 +41,18 @@ class TitleListSerializer(serializers.ModelSerializer):
 
 
 class ReviewSerializer(serializers.ModelSerializer):
-    author = serializers.SlugRelatedField(slug_field="username", read_only=True,)
+    author = serializers.SlugRelatedField(
+        slug_field="username",
+        read_only=True,
+    )
 
     class Meta:
         model = Review
-        exclude = ("title",)
+        exclude = ("title", )
 
 
 class CommentsSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(
-        # default=serializers.CurrentUserDefault(),
         slug_field="username",
         read_only=True,
     )

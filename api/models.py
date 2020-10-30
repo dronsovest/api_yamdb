@@ -1,10 +1,7 @@
-import datetime
-
-from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
-User = get_user_model()
+from users.models import CustomUser as User
 
 
 class Genre(models.Model):
@@ -35,10 +32,16 @@ class Title(models.Model):
 
 class Review(models.Model):
     author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="reviewer"  # FIXME
+        User,
+        on_delete=models.CASCADE,
+        related_name="reviewer",  # FIXME
+        null=False,
     )
     title = models.ForeignKey(
-        Title, on_delete=models.CASCADE, related_name="title"  # FIXME
+        Title,
+        on_delete=models.CASCADE,
+        related_name="title",  # FIXME
+        null=False,
     )
     text = models.TextField(max_length=1000)
     score = models.IntegerField(
@@ -51,7 +54,11 @@ class Review(models.Model):
 
 
 class Comments(models.Model):
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="commenter")
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="commenter"
+    )
     review = models.ForeignKey(
         Review, on_delete=models.CASCADE, related_name="review"  # FIXME
     )

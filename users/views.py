@@ -34,7 +34,11 @@ class GetConfirmationCode(APIView):
             f"Ваш confirmation_code: {confirmation_code}\n"
         )
         send_mail(
-            subject, body, "yamdb@yandex.test", [user.email,], fail_silently=False,
+            subject,
+            body,
+            "yamdb@yandex.test",
+            [user.email, ],
+            fail_silently=False,
         )
 
         return Response(serializer.data, status=200)
@@ -62,10 +66,16 @@ class UserViewSet(viewsets.ModelViewSet):
     search_fields = ("username",)
 
     @action(
-        detail=False, methods=("patch", "get",), permission_classes=(IsAuthenticated,)
+        detail=False,
+        methods=("patch", "get",),
+        permission_classes=(IsAuthenticated,)
     )
     def me(self, request):
-        serializer = UserSerializer(request.user, data=request.data, partial=True)
+        serializer = UserSerializer(
+            request.user,
+            data=request.data,
+            partial=True
+        )
         if serializer.is_valid():
             if request.method == "GET":
                 return Response(serializer.data, status=200)
