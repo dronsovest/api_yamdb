@@ -7,8 +7,8 @@ from users.models import CustomUser as User
 class Category(models.Model):
     name = models.CharField(max_length=60)
     slug = models.SlugField(unique=True)
-    
-    
+
+
 class Genre(models.Model):
     name = models.CharField(max_length=60)
     slug = models.SlugField(unique=True)

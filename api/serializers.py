@@ -43,12 +43,25 @@ class TitleListSerializer(serializers.ModelSerializer):
 class ReviewSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(
         slug_field="username",
-        read_only=True,
+        read_only=True
     )
+
+    def validate(self, data):
+        title = self.context["title"]
+        request = self.context["request"]
+        if (
+            request.method != "PATCH" and
+            Review.objects.filter(title=title, author=request.user).exists()
+        ):
+            raise serializers.ValidationError(
+                "О произведении можно оставить только один отзыв"
+            )
+        return data
 
     class Meta:
         model = Review
-        exclude = ("title", )
+        fields = "__all__"
+        extra_kwargs = {"title": {"required": False}}
 
 
 class CommentSerializer(serializers.ModelSerializer):
