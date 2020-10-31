@@ -3,8 +3,6 @@ from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, mixins, viewsets
 from rest_framework.exceptions import ValidationError
-from rest_framework.permissions import IsAuthenticated
-
 from users.permissions import IsAdmin
 
 from .filter import TitleFilter
@@ -57,12 +55,7 @@ class TitleViewSet(viewsets.ModelViewSet):
 class ReviewViewSet(viewsets.ModelViewSet):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
-    permission_classes_by_method = {
-        "GET": [ReadOnly],
-        "POST": [IsAuthenticated],
-        "DELETE": [IsModerator],
-        "PATCH": [IsOwner]
-    }
+    permission_classes = (ReadOnly | IsOwner | IsModerator | IsAdmin,)
 
     def get_queryset(self):
         title = get_object_or_404(Title, pk=self.kwargs["title_id"])
@@ -76,68 +69,28 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         title = get_object_or_404(Title, pk=self.kwargs["title_id"])
-        if Review.objects.filter(
-                author=self.request.user,
-                title_id=title
-        ).exists():
+        if Review.objects.filter(author=self.request.user,
+                                 title_id=title).exists():
             raise ValidationError(
-                detail="Добавить больше одного обзора нельзя"
-            )
+                detail="Добавить больше одного обзора нельзя")
         serializer.save(author=self.request.user, title=title)
-
-    def get_permissions(self):
-        try:
-            return [
-                permission() for permission
-                in self.permission_classes_by_method[
-                    self.request._request.method
-                ]
-            ]
-        except KeyError:
-            return [
-                permission() for permission
-                in self.permission_classes_by_method["default"]
-            ]
 
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     queryset = Comment.objects.all()
-    permission_classes_by_method = {
-        "GET": [ReadOnly],
-        "POST": [IsAuthenticated],
-        "DELETE": [IsModerator],
-        "PATCH": [IsOwner]
-    }
+    permission_classes = (ReadOnly | IsOwner | IsModerator | IsAdmin,)
 
     def get_queryset(self):
         review = get_object_or_404(
-            Review,
-            pk=self.kwargs["review_id"],
+            Review, pk=self.kwargs["review_id"],
             title_id=self.kwargs["title_id"],
         )
         return review.review.all()
 
     def perform_create(self, serializer):
         review = get_object_or_404(
-            Review,
-            pk=self.kwargs["review_id"],
+            Review, pk=self.kwargs["review_id"],
             title_id=self.kwargs["title_id"],
         )
         serializer.save(author=self.request.user, review=review)
-
-    def get_permissions(self):
-        try:
-            return [
-                permission() for permission
-                in self.permission_classes_by_method[
-                    self.request._request.method
-                ]
-            ]
-        except KeyError:
-            return [
-                permission() for permission
-                in self.permission_classes_by_method[
-                    "default"
-                ]
-            ]

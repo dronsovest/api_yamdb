@@ -8,9 +8,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import AccessToken
 
+from api_yamdb.settings import EMAIL_FROM_DEFOULT, EMAIL_AUTH_URL
 from users.models import CustomUser
-from users.serializers import (EmailSerializer, GetTokenSerializer,
-                               UserSerializer)
+from users.serializers import EmailSerializer, GetTokenSerializer, UserSerializer
 
 from .permissions import IsAdmin
 
@@ -29,16 +29,12 @@ class GetConfirmationCode(APIView):
         body = (
             f"Для продолжения регистрации {user.email} в YaMDB и\n"
             f"получения токена отправьте запрос на\n"
-            f"http://127.0.0.1:8000/api/v1/auth/email/ с\n"
+            f"{EMAIL_AUTH_URL} с\n"
             f"параметрами email и confirmation_code.\n\n"
             f"Ваш confirmation_code: {confirmation_code}\n"
         )
         send_mail(
-            subject,
-            body,
-            "yamdb@yandex.test",
-            [user.email, ],
-            fail_silently=False,
+            subject, body, EMAIL_FROM_DEFOULT, [user.email,], fail_silently=False,
         )
 
         return Response(serializer.data, status=200)
@@ -66,16 +62,10 @@ class UserViewSet(viewsets.ModelViewSet):
     search_fields = ("username",)
 
     @action(
-        detail=False,
-        methods=("patch", "get",),
-        permission_classes=(IsAuthenticated,)
+        detail=False, methods=("patch", "get",), permission_classes=(IsAuthenticated,)
     )
     def me(self, request):
-        serializer = UserSerializer(
-            request.user,
-            data=request.data,
-            partial=True
-        )
+        serializer = UserSerializer(request.user, data=request.data, partial=True)
         if serializer.is_valid():
             if request.method == "GET":
                 return Response(serializer.data, status=200)

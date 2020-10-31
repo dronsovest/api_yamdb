@@ -7,7 +7,7 @@ from users.models import CustomUser as User
 class Category(models.Model):
     name = models.CharField(max_length=60)
     slug = models.SlugField(unique=True)
-    
+
     class Meta:
         verbose_name = "Category"
 
@@ -15,7 +15,7 @@ class Category(models.Model):
 class Genre(models.Model):
     name = models.CharField(max_length=60)
     slug = models.SlugField(unique=True)
-    
+
     class Meta:
         verbose_name = "Genre"
 
@@ -39,16 +39,10 @@ class Title(models.Model):
 
 class Review(models.Model):
     author = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name="reviewer",
-        null=False
+        User, on_delete=models.CASCADE, related_name="reviewer", null=False
     )
     title = models.ForeignKey(
-        Title,
-        on_delete=models.CASCADE,
-        related_name="title",
-        null=False,
+        Title, on_delete=models.CASCADE, related_name="title", null=False,
     )
     text = models.TextField(max_length=1000)
     score = models.IntegerField(

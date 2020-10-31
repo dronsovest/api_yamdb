@@ -14,45 +14,170 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
+<<<<<<< HEAD
+            name="Catigories",
+=======
             name='Category',
+>>>>>>> master
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=60)),
-                ('slug', models.SlugField(unique=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=60)),
+                ("slug", models.SlugField(unique=True)),
             ],
         ),
         migrations.CreateModel(
+<<<<<<< HEAD
+            name="Genre",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=60)),
+                ("slug", models.SlugField(unique=True)),
+=======
             name='Comment',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('text', models.TextField(max_length=1000)),
                 ('pub_date', models.DateTimeField(auto_now_add=True)),
+>>>>>>> master
             ],
             options={
                 'ordering': ['id'],
             },
         ),
         migrations.CreateModel(
+<<<<<<< HEAD
+            name="Title",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=60)),
+                ("year", models.IntegerField()),
+                ("description", models.TextField()),
+                (
+                    "category",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="catigory",
+                        to="api.Catigories",
+                    ),
+                ),
+                ("genre", models.ManyToManyField(related_name="title", to="api.Genre")),
+            ],
+            options={"ordering": ["id"],},
+=======
             name='Genre',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=60)),
                 ('slug', models.SlugField(unique=True)),
             ],
+>>>>>>> master
         ),
         migrations.CreateModel(
-            name='Review',
+            name="Review",
             fields=[
+<<<<<<< HEAD
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("text", models.TextField(max_length=1000)),
+                (
+                    "score",
+                    models.IntegerField(
+                        validators=[
+                            django.core.validators.MinValueValidator(1),
+                            django.core.validators.MaxValueValidator(10),
+                        ]
+                    ),
+                ),
+                ("pub_date", models.DateTimeField(auto_now_add=True)),
+                (
+                    "author",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="reviewer",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "title",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="title",
+                        to="api.Title",
+                    ),
+                ),
+=======
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('text', models.TextField(max_length=1000)),
                 ('score', models.IntegerField(validators=[django.core.validators.MinValueValidator(1), django.core.validators.MaxValueValidator(10)])),
                 ('pub_date', models.DateTimeField(auto_now_add=True)),
+>>>>>>> master
             ],
-            options={
-                'ordering': ['id'],
-            },
+            options={"ordering": ["id"],},
         ),
         migrations.CreateModel(
+<<<<<<< HEAD
+            name="Comments",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("text", models.TextField(max_length=1000)),
+                ("pub_date", models.DateTimeField(auto_now_add=True)),
+                (
+                    "author",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="commenter",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "review",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="review",
+                        to="api.Review",
+                    ),
+                ),
+=======
             name='Title',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
@@ -61,9 +186,8 @@ class Migration(migrations.Migration):
                 ('description', models.TextField()),
                 ('category', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='Category', to='api.Category')),
                 ('genre', models.ManyToManyField(related_name='title', to='api.Genre')),
+>>>>>>> master
             ],
-            options={
-                'ordering': ['id'],
-            },
+            options={"ordering": ["id"],},
         ),
     ]
