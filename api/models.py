@@ -23,7 +23,10 @@ class Genre(models.Model):
 
 class Title(models.Model):
     name = models.CharField(max_length=60, db_index=True)
-    year = models.IntegerField(db_index=True)
+    year = models.IntegerField(
+        db_index=True,
+        validators=[MaxValueValidator(datetime.date.today().year)]
+    )
     description = models.TextField()
     genre = models.ManyToManyField(Genre, related_name="genre")
     category = models.ForeignKey(
@@ -52,7 +55,6 @@ class Review(models.Model):
     pub_date = models.DateTimeField(
         auto_now_add=True,
         null=False, blank=False,
-        validators=[MaxValueValidator(datetime.date.today().year)]
     )
 
     class Meta:
