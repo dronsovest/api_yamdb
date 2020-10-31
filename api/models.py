@@ -23,7 +23,7 @@ class Title(models.Model):
         Catigories,
         on_delete=models.SET_NULL,
         null=True,
-        related_name="catigory",  # FIXME
+        related_name="catigory",
     )
 
     class Meta:
@@ -34,13 +34,13 @@ class Review(models.Model):
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="reviewer",  # FIXME
-        null=False,
+        related_name="reviewer",
+        null=False
     )
     title = models.ForeignKey(
         Title,
         on_delete=models.CASCADE,
-        related_name="title",  # FIXME
+        related_name="title",
         null=False,
     )
     text = models.TextField(max_length=1000)
@@ -60,7 +60,7 @@ class Comments(models.Model):
         related_name="commenter"
     )
     review = models.ForeignKey(
-        Review, on_delete=models.CASCADE, related_name="review"  # FIXME
+        Review, on_delete=models.CASCADE, related_name="review"
     )
     text = models.TextField(max_length=1000)
     pub_date = models.DateTimeField(auto_now_add=True, null=False, blank=False)
