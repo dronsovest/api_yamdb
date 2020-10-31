@@ -21,15 +21,15 @@ class Genre(models.Model):
 
 
 class Title(models.Model):
-    name = models.CharField(max_length=60)
-    year = models.IntegerField()
+    name = models.CharField(max_length=60, db_index=True)
+    year = models.IntegerField(db_index=True)
     description = models.TextField()
-    genre = models.ManyToManyField(Genre, related_name="title")
+    genre = models.ManyToManyField(Genre, related_name="genre")
     category = models.ForeignKey(
         Category,
         on_delete=models.SET_NULL,
         null=True,
-        related_name="Category",
+        related_name="category",
     )
 
     class Meta:
@@ -51,7 +51,7 @@ class Review(models.Model):
     pub_date = models.DateTimeField(auto_now_add=True, null=False, blank=False)
 
     class Meta:
-        ordering = ["id"]
+        ordering = ["pub_date"]
         verbose_name = "Review"
 
 
