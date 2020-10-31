@@ -8,9 +8,9 @@ from rest_framework.permissions import IsAuthenticated
 from users.permissions import IsAdmin
 
 from .filter import TitleFilter
-from .models import Catigories, Comments, Genre, Review, Title
+from .models import Category, Comment, Genre, Review, Title
 from .permissions import IsModerator, IsOwner, ReadOnly
-from .serializers import (CatigoriesSerializer, CommentsSerializer,
+from .serializers import (CategorySerializer, CommentSerializer,
                           GenreSerializer, ReviewSerializer,
                           TitleCreateSerializer, TitleListSerializer)
 
@@ -33,9 +33,9 @@ class GenreViewSet(ListCreateDeleteApiViewSet):
     lookup_field = "slug"
 
 
-class CategoriesViewSet(ListCreateDeleteApiViewSet):
-    serializer_class = CatigoriesSerializer
-    queryset = Catigories.objects.all()
+class CategoryViewSet(ListCreateDeleteApiViewSet):
+    serializer_class = CategorySerializer
+    queryset = Category.objects.all()
     permission_classes = (IsAdmin | ReadOnly,)
     filter_backends = [filters.SearchFilter]
     search_fields = ("name",)
@@ -95,8 +95,8 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
 
 class CommentViewSet(viewsets.ModelViewSet):
-    serializer_class = CommentsSerializer
-    queryset = Comments.objects.all()
+    serializer_class = CommentSerializer
+    queryset = Comment.objects.all()
     permission_classes_by_method = {
         'GET': [ReadOnly],
         'POST': [IsAuthenticated],

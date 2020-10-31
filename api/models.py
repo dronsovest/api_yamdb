@@ -4,12 +4,12 @@ from django.db import models
 from users.models import CustomUser as User
 
 
-class Genre(models.Model):
+class Category(models.Model):
     name = models.CharField(max_length=60)
     slug = models.SlugField(unique=True)
-
-
-class Catigories(models.Model):
+    
+    
+class Genre(models.Model):
     name = models.CharField(max_length=60)
     slug = models.SlugField(unique=True)
 
@@ -20,10 +20,10 @@ class Title(models.Model):
     description = models.TextField()
     genre = models.ManyToManyField(Genre, related_name="title")
     category = models.ForeignKey(
-        Catigories,
+        Category,
         on_delete=models.SET_NULL,
         null=True,
-        related_name="catigory",
+        related_name="Category",
     )
 
     class Meta:
@@ -53,7 +53,7 @@ class Review(models.Model):
         ordering = ["id"]
 
 
-class Comments(models.Model):
+class Comment(models.Model):
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
