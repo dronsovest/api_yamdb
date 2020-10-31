@@ -3,14 +3,11 @@ from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, mixins, viewsets
 from rest_framework.exceptions import ValidationError
-
-from rest_framework.permissions import IsAuthenticated
-
 from users.permissions import IsAdmin
 
 from .filter import TitleFilter
 from .models import Catigories, Comments, Genre, Review, Title
-from .permissions import IsModerator, IsOwner, ReadOnly
+from .permissions import IsModerator, ReadOnly, IsOwner
 from .serializers import (CatigoriesSerializer, CommentsSerializer,
                           GenreSerializer, ReviewSerializer,
                           TitleCreateSerializer, TitleListSerializer)
@@ -58,12 +55,8 @@ class TitleViewSet(viewsets.ModelViewSet):
 class ReviewViewSet(viewsets.ModelViewSet):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
-    permission_classes_by_method = {
-        'GET': [ReadOnly],
-        'POST': [IsAuthenticated],
-        'DELETE': [IsModerator],
-        'PATCH': [IsOwner]
-    }
+    permission_classes = (ReadOnly | IsOwner | IsModerator | IsAdmin,)
+
     def get_queryset(self):
         title = get_object_or_404(Title, pk=self.kwargs["title_id"])
         return title.title.all()
@@ -79,30 +72,12 @@ class ReviewViewSet(viewsets.ModelViewSet):
             )
         serializer.save(author=self.request.user, title=title)
 
-    def get_permissions(self):
-        try:
-            return [
-                permission() for permission
-                in self.permission_classes_by_method[
-                    self.request._request.method
-                ]
-            ]
-        except KeyError:
-            return [
-                permission() for permission
-                in self.permission_classes_by_method['default']
-            ]
-
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentsSerializer
     queryset = Comments.objects.all()
-    permission_classes_by_method = {
-        'GET': [ReadOnly],
-        'POST': [IsAuthenticated],
-        'DELETE': [IsModerator],
-        'PATCH': [IsOwner]
-    }
+    permission_classes = (ReadOnly | IsOwner | IsModerator | IsAdmin,)
+
     def get_queryset(self):
         review = get_object_or_404(
             Review,
@@ -118,18 +93,3 @@ class CommentViewSet(viewsets.ModelViewSet):
             title_id=self.kwargs["title_id"],
         )
         serializer.save(author=self.request.user, review=review)
-    def get_permissions(self):
-        try:
-            return [
-                permission() for permission
-                in self.permission_classes_by_method[
-                    self.request._request.method
-                ]
-            ]
-        except KeyError:
-            return [
-                permission() for permission
-                in self.permission_classes_by_method[
-                    'default'
-                ]
-            ]
