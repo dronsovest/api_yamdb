@@ -51,7 +51,7 @@ class Review(models.Model):
     pub_date = models.DateTimeField(auto_now_add=True, null=False, blank=False)
 
     class Meta:
-        ordering = ["id"]
+        ordering = ["pub_date"]
         verbose_name = "Review"
 
 
