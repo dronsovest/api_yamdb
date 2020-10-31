@@ -69,10 +69,6 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         title = get_object_or_404(Title, pk=self.kwargs["title_id"])
-        if Review.objects.filter(author=self.request.user,
-                                 title_id=title).exists():
-            raise ValidationError(
-                detail="Добавить больше одного обзора нельзя")
         serializer.save(author=self.request.user, title=title)
 
 
