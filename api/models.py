@@ -4,14 +4,20 @@ from django.db import models
 from users.models import CustomUser as User
 
 
+class Category(models.Model):
+    name = models.CharField(max_length=60)
+    slug = models.SlugField(unique=True)
+
+    class Meta:
+        verbose_name = "Category"
+
+
 class Genre(models.Model):
     name = models.CharField(max_length=60)
     slug = models.SlugField(unique=True)
 
-
-class Catigories(models.Model):
-    name = models.CharField(max_length=60)
-    slug = models.SlugField(unique=True)
+    class Meta:
+        verbose_name = "Genre"
 
 
 class Title(models.Model):
@@ -20,11 +26,15 @@ class Title(models.Model):
     description = models.TextField()
     genre = models.ManyToManyField(Genre, related_name="title")
     category = models.ForeignKey(
-        Catigories, on_delete=models.SET_NULL, null=True, related_name="catigory",
+        Category,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="Category",
     )
 
     class Meta:
         ordering = ["id"]
+        verbose_name = "Title"
 
 
 class Review(models.Model):
@@ -42,13 +52,21 @@ class Review(models.Model):
 
     class Meta:
         ordering = ["id"]
+        verbose_name = "Review"
 
 
-class Comments(models.Model):
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="commenter")
-    review = models.ForeignKey(Review, on_delete=models.CASCADE, related_name="review")
+class Comment(models.Model):
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="commenter"
+    )
+    review = models.ForeignKey(
+        Review, on_delete=models.CASCADE, related_name="review"
+    )
     text = models.TextField(max_length=1000)
     pub_date = models.DateTimeField(auto_now_add=True, null=False, blank=False)
 
     class Meta:
         ordering = ["id"]
+        verbose_name = "Review"

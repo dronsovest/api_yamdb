@@ -6,16 +6,11 @@ from rest_framework.exceptions import ValidationError
 from users.permissions import IsAdmin
 
 from .filter import TitleFilter
-from .models import Catigories, Comments, Genre, Review, Title
-from .permissions import IsModerator, ReadOnly, IsOwner
-from .serializers import (
-    CatigoriesSerializer,
-    CommentsSerializer,
-    GenreSerializer,
-    ReviewSerializer,
-    TitleCreateSerializer,
-    TitleListSerializer,
-)
+from .models import Category, Comment, Genre, Review, Title
+from .permissions import IsModerator, IsOwner, ReadOnly
+from .serializers import (CategorySerializer, CommentSerializer,
+                          GenreSerializer, ReviewSerializer,
+                          TitleCreateSerializer, TitleListSerializer)
 
 
 class ListCreateDeleteApiViewSet(
@@ -36,9 +31,9 @@ class GenreViewSet(ListCreateDeleteApiViewSet):
     lookup_field = "slug"
 
 
-class CategoriesViewSet(ListCreateDeleteApiViewSet):
-    serializer_class = CatigoriesSerializer
-    queryset = Catigories.objects.all()
+class CategoryViewSet(ListCreateDeleteApiViewSet):
+    serializer_class = CategorySerializer
+    queryset = Category.objects.all()
     permission_classes = (IsAdmin | ReadOnly,)
     filter_backends = [filters.SearchFilter]
     search_fields = ("name",)
@@ -66,26 +61,36 @@ class ReviewViewSet(viewsets.ModelViewSet):
         title = get_object_or_404(Title, pk=self.kwargs["title_id"])
         return title.title.all()
 
+    def get_serializer_context(self):
+        context = super(ReviewViewSet, self).get_serializer_context()
+        title = get_object_or_404(Title, id=self.kwargs["title_id"])
+        context.update({"title": title})
+        return context
+
     def perform_create(self, serializer):
         title = get_object_or_404(Title, pk=self.kwargs["title_id"])
-        if Review.objects.filter(author=self.request.user, title_id=title).exists():
-            raise ValidationError(detail="Добавить больше одного обзора нельзя")
+        if Review.objects.filter(author=self.request.user,
+                                 title_id=title).exists():
+            raise ValidationError(
+                detail="Добавить больше одного обзора нельзя")
         serializer.save(author=self.request.user, title=title)
 
 
 class CommentViewSet(viewsets.ModelViewSet):
-    serializer_class = CommentsSerializer
-    queryset = Comments.objects.all()
+    serializer_class = CommentSerializer
+    queryset = Comment.objects.all()
     permission_classes = (ReadOnly | IsOwner | IsModerator | IsAdmin,)
 
     def get_queryset(self):
         review = get_object_or_404(
-            Review, pk=self.kwargs["review_id"], title_id=self.kwargs["title_id"],
+            Review, pk=self.kwargs["review_id"],
+            title_id=self.kwargs["title_id"],
         )
         return review.review.all()
 
     def perform_create(self, serializer):
         review = get_object_or_404(
-            Review, pk=self.kwargs["review_id"], title_id=self.kwargs["title_id"],
+            Review, pk=self.kwargs["review_id"],
+            title_id=self.kwargs["title_id"],
         )
         serializer.save(author=self.request.user, review=review)
