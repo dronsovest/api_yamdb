@@ -9,9 +9,9 @@ from rest_framework.permissions import IsAuthenticated
 from users.permissions import IsAdmin
 
 from .filter import TitleFilter
-from .models import Catigories, Comments, Genre, Review, Title
+from .models import Category, Comment, Genre, Review, Title
 from .permissions import IsModerator, IsOwner, ReadOnly
-from .serializers import (CatigoriesSerializer, CommentsSerializer,
+from .serializers import (CategorySerializer, CommentSerializer,
                           GenreSerializer, ReviewSerializer,
                           TitleCreateSerializer, TitleListSerializer)
 
@@ -34,9 +34,9 @@ class GenreViewSet(ListCreateDeleteApiViewSet):
     lookup_field = "slug"
 
 
-class CategoriesViewSet(ListCreateDeleteApiViewSet):
-    serializer_class = CatigoriesSerializer
-    queryset = Catigories.objects.all()
+class CategoryViewSet(ListCreateDeleteApiViewSet):
+    serializer_class = CategorySerializer
+    queryset = Category.objects.all()
     permission_classes = (IsAdmin | ReadOnly,)
     filter_backends = [filters.SearchFilter]
     search_fields = ("name",)
@@ -59,14 +59,20 @@ class ReviewViewSet(viewsets.ModelViewSet):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
     permission_classes_by_method = {
-        'GET': [ReadOnly],
-        'POST': [IsAuthenticated],
-        'DELETE': [IsModerator],
-        'PATCH': [IsOwner]
+        "GET": [ReadOnly],
+        "POST": [IsAuthenticated],
+        "DELETE": [IsModerator],
+        "PATCH": [IsOwner]
     }
     def get_queryset(self):
         title = get_object_or_404(Title, pk=self.kwargs["title_id"])
         return title.title.all()
+
+    def get_serializer_context(self):
+        context = super(ReviewViewSet, self).get_serializer_context()
+        title = get_object_or_404(Title, id=self.kwargs["title_id"])
+        context.update({"title": title})
+        return context
 
     def perform_create(self, serializer):
         title = get_object_or_404(Title, pk=self.kwargs["title_id"])
@@ -90,18 +96,18 @@ class ReviewViewSet(viewsets.ModelViewSet):
         except KeyError:
             return [
                 permission() for permission
-                in self.permission_classes_by_method['default']
+                in self.permission_classes_by_method["default"]
             ]
 
 
 class CommentViewSet(viewsets.ModelViewSet):
-    serializer_class = CommentsSerializer
-    queryset = Comments.objects.all()
+    serializer_class = CommentSerializer
+    queryset = Comment.objects.all()
     permission_classes_by_method = {
-        'GET': [ReadOnly],
-        'POST': [IsAuthenticated],
-        'DELETE': [IsModerator],
-        'PATCH': [IsOwner]
+        "GET": [ReadOnly],
+        "POST": [IsAuthenticated],
+        "DELETE": [IsModerator],
+        "PATCH": [IsOwner]
     }
     def get_queryset(self):
         review = get_object_or_404(
@@ -130,6 +136,6 @@ class CommentViewSet(viewsets.ModelViewSet):
             return [
                 permission() for permission
                 in self.permission_classes_by_method[
-                    'default'
+                    "default"
                 ]
             ]

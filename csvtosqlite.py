@@ -74,4 +74,4 @@ def csvToDb(csvFile,dbFile,tablename, outputToFile = False):
 
 
 
-csvToDb('data/category.csv', "db.sqlite3", 'api_catigories')
+csvToDb('data/category.csv', "db.sqlite3", 'api_Category')

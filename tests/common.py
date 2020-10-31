@@ -96,10 +96,10 @@ def create_reviews(user_client, admin):
     return result, titles, user, moderator
 
 
-def create_comments(user_client, admin):
+def create_Comment(user_client, admin):
     def create_comment(uclient, title_id, review_id, text):
         data = {'text': text}
-        response = uclient.post(f'/api/v1/titles/{title_id}/reviews/{review_id}/comments/', data=data)
+        response = uclient.post(f'/api/v1/titles/{title_id}/reviews/{review_id}/Comment/', data=data)
         return response.json()['id']
 
     reviews, titles, user, moderator = create_reviews(user_client, admin)
