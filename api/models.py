@@ -1,3 +1,4 @@
+import datetime
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
@@ -48,7 +49,11 @@ class Review(models.Model):
     score = models.IntegerField(
         validators=[MinValueValidator(1), MaxValueValidator(10)], null=False,
     )
-    pub_date = models.DateTimeField(auto_now_add=True, null=False, blank=False)
+    pub_date = models.DateTimeField(
+        auto_now_add=True,
+        null=False, blank=False,
+        validators=[MaxValueValidator(datetime.date.today().year)]
+    )
 
     class Meta:
         ordering = ["pub_date"]
