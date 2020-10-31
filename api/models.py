@@ -7,11 +7,17 @@ from users.models import CustomUser as User
 class Category(models.Model):
     name = models.CharField(max_length=60)
     slug = models.SlugField(unique=True)
+    
+    class Meta:
+        verbose_name = "Category"
 
 
 class Genre(models.Model):
     name = models.CharField(max_length=60)
     slug = models.SlugField(unique=True)
+    
+    class Meta:
+        verbose_name = "Genre"
 
 
 class Title(models.Model):
@@ -28,6 +34,7 @@ class Title(models.Model):
 
     class Meta:
         ordering = ["id"]
+        verbose_name = "Title"
 
 
 class Review(models.Model):
@@ -51,6 +58,7 @@ class Review(models.Model):
 
     class Meta:
         ordering = ["id"]
+        verbose_name = "Review"
 
 
 class Comment(models.Model):
@@ -67,3 +75,4 @@ class Comment(models.Model):
 
     class Meta:
         ordering = ["id"]
+        verbose_name = "Review"
