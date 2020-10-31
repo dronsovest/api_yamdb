@@ -3,18 +3,8 @@ from rest_framework.routers import DefaultRouter
 
 from users.views import GetConfirmationCode, GetToken, UserViewSet
 
-<<<<<<< HEAD
-from .views import (
-    CategoriesViewSet,
-    CommentViewSet,
-    GenreViewSet,
-    ReviewViewSet,
-    TitleViewSet,
-)
-=======
 from .views import (CategoryViewSet, CommentViewSet, GenreViewSet,
                     ReviewViewSet, TitleViewSet)
->>>>>>> master
 
 router = DefaultRouter()
 
