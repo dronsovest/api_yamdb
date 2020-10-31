@@ -23,8 +23,6 @@ class TitleCreateSerializer(serializers.ModelSerializer):
         queryset=Category.objects.all(), slug_field="slug",
     )
 
-    year = serializers.IntegerField(required=False)
-
     class Meta:
         fields = ("id", "name", "year", "description", "genre", "category")
         model = Title
