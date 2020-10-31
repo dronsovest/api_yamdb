@@ -4,6 +4,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, mixins, viewsets
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.response import Response
 
 from users.permissions import IsAdmin
 
@@ -74,6 +75,37 @@ class ReviewViewSet(viewsets.ModelViewSet):
             )
         serializer.save(author=self.request.user, title=title)
 
+    def partial_update(self, request, pk=None, title_id=None):
+        review = get_object_or_404(
+            Review,
+            title_id=self.kwargs["title_id"],
+            pk=self.kwargs["pk"],
+        )
+        serializer = ReviewSerializer(
+            review,
+            data=self.request.data,
+            partial=True
+        )
+        if review.author == request.user:
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=200)
+            raise ValidationError(
+                detail="Вы не можете редактировать чужой отзыв"
+            )
+        return Response(status=403)
+
+    def destroy(self, request, pk=None, title_id=None):
+        review = get_object_or_404(
+            Review,
+            title_id=self.kwargs["title_id"],
+            pk=self.kwargs["pk"],
+        )
+        if review.author == request.user:
+            review.delete()
+            return Response(status=200)
+        return Response(status=403)
+
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentsSerializer
@@ -83,15 +115,36 @@ class CommentViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         review = get_object_or_404(
             Review,
-            pk=self.kwargs.get("review_id"),
-            title_id=self.kwargs.get("title_id"),
+            pk=self.kwargs["review_id"],
+            title_id=self.kwargs["title_id"],
         )
         return review.review.all()
 
     def perform_create(self, serializer):
         review = get_object_or_404(
             Review,
-            pk=self.kwargs.get("review_id"),
-            title_id=self.kwargs.get("title_id"),
+            pk=self.kwargs["review_id"],
+            title_id=self.kwargs["title_id"],
         )
         serializer.save(author=self.request.user, review=review)
+
+    def partial_update(self, request, pk=None, title_id=None, review_id=None):
+        comment = get_object_or_404(
+            Comments,
+            pk=self.kwargs["pk"],
+            review_id=self.kwargs["review_id"],
+        )
+        serializer = CommentsSerializer(
+            comment,
+            data=self.request.data,
+            partial=True
+        )
+        if comment.author == request.user:
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=200)
+            raise ValidationError(
+                detail="Вы не можете редактировать чужой комментарий"
+            )
+        return Response(status=403)
+
