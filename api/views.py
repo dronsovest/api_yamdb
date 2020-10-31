@@ -8,9 +8,14 @@ from users.permissions import IsAdmin
 from .filter import TitleFilter
 from .models import Catigories, Comments, Genre, Review, Title
 from .permissions import IsModerator, ReadOnly, IsOwner
-from .serializers import (CatigoriesSerializer, CommentsSerializer,
-                          GenreSerializer, ReviewSerializer,
-                          TitleCreateSerializer, TitleListSerializer)
+from .serializers import (
+    CatigoriesSerializer,
+    CommentsSerializer,
+    GenreSerializer,
+    ReviewSerializer,
+    TitleCreateSerializer,
+    TitleListSerializer,
+)
 
 
 class ListCreateDeleteApiViewSet(
@@ -63,13 +68,8 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         title = get_object_or_404(Title, pk=self.kwargs["title_id"])
-        if Review.objects.filter(
-                author=self.request.user,
-                title_id=title
-        ).exists():
-            raise ValidationError(
-                detail="Добавить больше одного обзора нельзя"
-            )
+        if Review.objects.filter(author=self.request.user, title_id=title).exists():
+            raise ValidationError(detail="Добавить больше одного обзора нельзя")
         serializer.save(author=self.request.user, title=title)
 
 
@@ -80,16 +80,12 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         review = get_object_or_404(
-            Review,
-            pk=self.kwargs["review_id"],
-            title_id=self.kwargs["title_id"],
+            Review, pk=self.kwargs["review_id"], title_id=self.kwargs["title_id"],
         )
         return review.review.all()
 
     def perform_create(self, serializer):
         review = get_object_or_404(
-            Review,
-            pk=self.kwargs["review_id"],
-            title_id=self.kwargs["title_id"],
+            Review, pk=self.kwargs["review_id"], title_id=self.kwargs["title_id"],
         )
         serializer.save(author=self.request.user, review=review)

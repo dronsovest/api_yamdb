@@ -20,10 +20,7 @@ class Title(models.Model):
     description = models.TextField()
     genre = models.ManyToManyField(Genre, related_name="title")
     category = models.ForeignKey(
-        Catigories,
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name="catigory",
+        Catigories, on_delete=models.SET_NULL, null=True, related_name="catigory",
     )
 
     class Meta:
@@ -32,16 +29,10 @@ class Title(models.Model):
 
 class Review(models.Model):
     author = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name="reviewer",
-        null=False
+        User, on_delete=models.CASCADE, related_name="reviewer", null=False
     )
     title = models.ForeignKey(
-        Title,
-        on_delete=models.CASCADE,
-        related_name="title",
-        null=False,
+        Title, on_delete=models.CASCADE, related_name="title", null=False,
     )
     text = models.TextField(max_length=1000)
     score = models.IntegerField(
@@ -54,14 +45,8 @@ class Review(models.Model):
 
 
 class Comments(models.Model):
-    author = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name="commenter"
-    )
-    review = models.ForeignKey(
-        Review, on_delete=models.CASCADE, related_name="review"
-    )
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="commenter")
+    review = models.ForeignKey(Review, on_delete=models.CASCADE, related_name="review")
     text = models.TextField(max_length=1000)
     pub_date = models.DateTimeField(auto_now_add=True, null=False, blank=False)
 
