@@ -18,6 +18,14 @@ class CustomUser(AbstractUser):
         max_length=1000, blank=True, null=True, verbose_name="О себе",
     )
 
+    @property
+    def is_admin(self):
+        return self.role == self.UserRole.ADMIN or self.is_staff or self.is_superuser
+
+    @property
+    def is_moderator(self):
+        return self.role == self.UserRole.MODERATOR
+
     class Meta:
         ordering = ["id"]
 
