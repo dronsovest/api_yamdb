@@ -40,7 +40,7 @@ class CategoryViewSet(ListCreateDeleteApiViewSet):
 
 
 class TitleViewSet(viewsets.ModelViewSet):
-    queryset = Title.objects.annotate(rating=Avg("title__score"))
+    queryset = Title.objects.annotate(rating=Avg("reviews__score"))
     permission_classes = (IsAdmin | ReadOnly,)
     filter_backends = (DjangoFilterBackend,)
     filter_class = TitleFilter
@@ -58,7 +58,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         title = get_object_or_404(Title, pk=self.kwargs["title_id"])
-        return title.title.all()
+        return title.reviews.all()
 
     def get_serializer_context(self):
         context = super(ReviewViewSet, self).get_serializer_context()
@@ -81,7 +81,7 @@ class CommentViewSet(viewsets.ModelViewSet):
             Review, pk=self.kwargs["review_id"],
             title_id=self.kwargs["title_id"],
         )
-        return review.review.all()
+        return review.comments.all()
 
     def perform_create(self, serializer):
         review = get_object_or_404(
