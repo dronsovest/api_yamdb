@@ -28,12 +28,12 @@ class Title(models.Model):
         validators=[MaxValueValidator(datetime.date.today().year)]
     )
     description = models.TextField()
-    genre = models.ManyToManyField(Genre, related_name="genre")
+    genre = models.ManyToManyField(Genre, related_name="titles")
     category = models.ForeignKey(
         Category,
         on_delete=models.SET_NULL,
         null=True,
-        related_name="category",
+        related_name="titles",
     )
 
     class Meta:
@@ -43,10 +43,10 @@ class Title(models.Model):
 
 class Review(models.Model):
     author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="reviewer", null=False
+        User, on_delete=models.CASCADE, related_name="reviews", null=False
     )
     title = models.ForeignKey(
-        Title, on_delete=models.CASCADE, related_name="title", null=False,
+        Title, on_delete=models.CASCADE, related_name="reviews", null=False,
     )
     text = models.TextField(max_length=1000)
     score = models.IntegerField(
@@ -66,14 +66,14 @@ class Comment(models.Model):
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="commenter"
+        related_name="comments"
     )
     review = models.ForeignKey(
-        Review, on_delete=models.CASCADE, related_name="review"
+        Review, on_delete=models.CASCADE, related_name="comments"
     )
     text = models.TextField(max_length=1000)
     pub_date = models.DateTimeField(auto_now_add=True, null=False, blank=False)
 
     class Meta:
         ordering = ["id"]
-        verbose_name = "Review"
+        verbose_name = "Comment"
